@@ -1,0 +1,67 @@
+<html>
+    <body>
+    <style>
+        .alive {
+        width: 10px;
+        height: 10px;
+        color: green;
+        background-color: green;
+        display: inline-block;
+        }
+        .dead {
+            width: 10px;
+            height: 10px;
+            color: #880000;
+            background-color: #880000;
+            display: inline-block;
+        }
+    </style>
+    <button id="nextStep" onclick="step()">Run!</button><br>
+    <script>
+        let cols = 1 + Math.floor(Math.random() * 100);
+        let rows = 1 + Math.floor(Math.random() * 100);
+        let data = [];
+        let alive = 0;
+        for (let col = 0; col < cols; ++col) {
+            let temp = [];
+            for (let row = 0; row < rows; ++row) {
+                let cell = document.createElement("div");
+                cell.id = "col:" + col + "row:" + row;
+                temp.push(Math.floor(Math.random() * 2))
+                if (temp[row]) cell.className = "alive";
+                else cell.className = "dead";
+                alive += temp[row];
+                document.body.append(cell);
+            }
+            data.push(temp);
+            document.body.append(document.createElement("br"));
+        }
+        async function step() {
+            alive = 0;
+            let temp = data;
+            let interval = setInterval( function() {
+            for (let col = 0; col < cols; ++col) {
+                for (let row = 0; row < rows; ++row) {
+                    let checkNeighbors = 0;
+                    for (let colNeighbors = -1; colNeighbors < 2; colNeighbors++) {
+                        for (let rowNeighbors = -1; rowNeighbors < 2; rowNeighbors++) {
+                            if (!rowNeighbors && !colNeighbors) continue;
+                           try {
+                                checkNeighbors += data[col + colNeighbors][row + rowNeighbors];
+                           } catch (e) {continue;}
+                        }
+                    }
+                    if (checkNeighbors == 3 && !data[col][row] || checkNeighbors >= 4 && data[col][row] || checkNeighbors <= 1 && data[col][row] || checkNeighbors != 2 && checkNeighbors != 3 && data[col][row]) temp[col][row] = !temp[col][row];
+                    alive += temp[col][row];
+                    let cell = document.getElementById("col:" + col + "row:" + row);
+                    if (temp[col][row]) cell.className = "alive";
+                    else cell.className = "dead";
+                }
+            }
+            data = temp;
+        }, 0);
+        };
+    </script>
+    
+</body>
+</html>
